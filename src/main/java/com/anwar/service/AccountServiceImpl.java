@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService, UserDetailsService {
@@ -49,6 +48,13 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         );
 
         return response;
+    }
+
+    @Override
+    public String getAccountRole(String username) {
+        Account account = accountRepository.findById(username).get();
+
+        return account.getRole();
     }
 
     @Override
