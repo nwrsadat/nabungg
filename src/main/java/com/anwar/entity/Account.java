@@ -38,4 +38,7 @@ public class Account {
 
     @Column(name = "Email")
     private String email;
+
+    @Column(name = "Role")
+    private String role;
 }
