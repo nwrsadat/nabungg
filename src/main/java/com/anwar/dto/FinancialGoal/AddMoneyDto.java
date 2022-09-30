@@ -1,4 +1,4 @@
-package com.anwar.dto.Spending;
+package com.anwar.dto.FinancialGoal;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-public class SpendingGridDto {
-    private String name;
-    private BigDecimal price;
-    private String username;
+public class AddMoneyDto {
+    public BigDecimal money;
 }

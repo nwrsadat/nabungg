@@ -5,7 +5,6 @@ import com.anwar.dto.Account.AddBalanceDto;
 import com.anwar.dto.Account.RegisterAccountDto;
 import com.anwar.dto.Response.ResponseDto;
 import com.anwar.entity.Account;
-import com.anwar.helper.Helper;
 import com.anwar.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -78,7 +77,7 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
 
         ResponseDto responseDto = new ResponseDto(
                 HttpStatus.OK.value(),
-                Helper.formatCurrency(dto.getBalance()) + " is added to your balance",
+                dto.getBalance() + " is added to your balance",
                 System.currentTimeMillis()
         );
 

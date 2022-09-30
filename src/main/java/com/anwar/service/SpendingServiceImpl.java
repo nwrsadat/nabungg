@@ -5,7 +5,6 @@ import com.anwar.dto.Spending.SpendMoneyDto;
 import com.anwar.dto.Spending.SpendingGridDto;
 import com.anwar.entity.Account;
 import com.anwar.entity.Spending;
-import com.anwar.helper.Helper;
 import com.anwar.repository.AccountRepository;
 import com.anwar.repository.SpendingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class SpendingServiceImpl implements SpendingService {
         if (account.getBalance().compareTo(dto.getPrice()) < 0) {
             responseDto = new ResponseDto(
                     HttpStatus.BAD_REQUEST.value(),
-                    "Your balance is not enough",
+                    "Your balance is not enough. Your balance is not enough. You're broke. Get a job.",
                     System.currentTimeMillis()
             );
 
@@ -112,7 +111,7 @@ public class SpendingServiceImpl implements SpendingService {
                 spendings.stream().map(
                         spending -> new SpendingGridDto(
                                 spending.getName(),
-                                Helper.formatCurrency(spending.getPrice()),
+                                spending.getPrice(),
                                 spending.getUsername()
                         ))
                         .collect(Collectors.toList()), spendings.getPageable(), spendings.getTotalElements());
