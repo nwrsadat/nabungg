@@ -25,7 +25,7 @@ public class RestSecurityConfiguration {
         http.antMatcher("/api/**").csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/account/**").permitAll()
-                .antMatchers("/api/spending/**").hasAuthority("User")
+                .antMatchers("/api/spending/**", "/api/financialgoal/**").hasAuthority("User")
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

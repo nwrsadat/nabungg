@@ -3,8 +3,10 @@ package com.anwar.service;
 import com.anwar.dto.Response.ResponseDto;
 import com.anwar.dto.Spending.SpendMoneyDto;
 import com.anwar.dto.Spending.SpendingGridDto;
+import com.anwar.entity.Account;
 import com.anwar.entity.Spending;
 import com.anwar.helper.Helper;
+import com.anwar.repository.AccountRepository;
 import com.anwar.repository.SpendingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -21,6 +23,9 @@ public class SpendingServiceImpl implements SpendingService {
     @Autowired
     private SpendingRepository spendingRepository;
 
+    @Autowired
+    private AccountRepository accountRepository;
+
     public Pageable getPagination(Integer page) {
         Pageable pagination = PageRequest.of(page - 1, 10, Sort.by("id"));
 
@@ -31,9 +36,30 @@ public class SpendingServiceImpl implements SpendingService {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
+    public Account getAccount() {
+        return accountRepository.findById(getUsername()).get();
+    }
+
     @Override
     public ResponseDto spendMoney(SpendMoneyDto dto) {
         String username = getUsername();
+        Account account = getAccount();
+        ResponseDto responseDto = null;
+
+        if (account.getBalance().compareTo(dto.getPrice()) < 0) {
+            responseDto = new ResponseDto(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Your balance is not enough",
+                    System.currentTimeMillis()
+            );
+
+            return responseDto;
+        }
+
+        account.setBalance(account.getBalance().subtract(dto.getPrice()));
+
+        accountRepository.save(account);
+
         Spending newSpending = new Spending();
 
         newSpending.setName(dto.getName());
@@ -44,7 +70,7 @@ public class SpendingServiceImpl implements SpendingService {
 
         spendingRepository.save(newSpending);
 
-        ResponseDto responseDto = new ResponseDto(
+        responseDto = new ResponseDto(
                 HttpStatus.CREATED.value(),
                 "New spending has been created successfully",
                 System.currentTimeMillis()
