@@ -14,6 +14,13 @@ public class SpendingRestController {
     @Autowired
     private SpendingService spendingService;
 
+    @GetMapping
+    public ResponseEntity<Object> getAllSpending(@RequestParam(defaultValue = "1") Integer page) {
+        var response = spendingService.getAllSpendings(page);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PostMapping
     public ResponseEntity<Object> spendMoney(@RequestBody SpendMoneyDto dto) {
         var response = spendingService.spendMoney(dto);

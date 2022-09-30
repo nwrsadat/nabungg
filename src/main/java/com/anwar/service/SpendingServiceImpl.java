@@ -2,20 +2,30 @@ package com.anwar.service;
 
 import com.anwar.dto.Response.ResponseDto;
 import com.anwar.dto.Spending.SpendMoneyDto;
+import com.anwar.dto.Spending.SpendingGridDto;
 import com.anwar.entity.Spending;
+import com.anwar.helper.Helper;
 import com.anwar.repository.SpendingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 public class SpendingServiceImpl implements SpendingService {
 
     @Autowired
     private SpendingRepository spendingRepository;
+
+    public Pageable getPagination(Integer page) {
+        Pageable pagination = PageRequest.of(page - 1, 1, Sort.by("id"));
+
+        return pagination;
+    }
 
     @Override
     public ResponseDto spendMoney(SpendMoneyDto dto) {
@@ -61,5 +71,21 @@ public class SpendingServiceImpl implements SpendingService {
         }
 
         return spending;
+    }
+
+    @Override
+    public Page<SpendingGridDto> getAllSpendings(Integer page) {
+        Pageable pagination = getPagination(page);
+        Page<Spending> spendings = spendingRepository.findAllSpendings(pagination);
+        Page<SpendingGridDto> dtos = new PageImpl<>(
+                spendings.stream().map(
+                        spending -> new SpendingGridDto(
+                                spending.getName(),
+                                Helper.formatCurrency(spending.getPrice()),
+                                spending.getUsername()
+                        ))
+                        .collect(Collectors.toList()), spendings.getPageable(), spendings.getTotalElements());
+
+        return dtos;
     }
 }
