@@ -22,14 +22,18 @@ public class SpendingServiceImpl implements SpendingService {
     private SpendingRepository spendingRepository;
 
     public Pageable getPagination(Integer page) {
-        Pageable pagination = PageRequest.of(page - 1, 1, Sort.by("id"));
+        Pageable pagination = PageRequest.of(page - 1, 10, Sort.by("id"));
 
         return pagination;
     }
 
+    public String getUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
     @Override
     public ResponseDto spendMoney(SpendMoneyDto dto) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = getUsername();
         Spending newSpending = new Spending();
 
         newSpending.setName(dto.getName());
@@ -63,7 +67,7 @@ public class SpendingServiceImpl implements SpendingService {
     }
 
     @Override
-    public Long getSpending(Long id) {
+    public Long countSpending(Long id) {
         var spending = spendingRepository.countById(id);
 
         if (spending == null) {
@@ -75,8 +79,9 @@ public class SpendingServiceImpl implements SpendingService {
 
     @Override
     public Page<SpendingGridDto> getAllSpendings(Integer page) {
+        String username = getUsername();
         Pageable pagination = getPagination(page);
-        Page<Spending> spendings = spendingRepository.findAllSpendings(pagination);
+        Page<Spending> spendings = spendingRepository.findAllSpendings(username, pagination);
         Page<SpendingGridDto> dtos = new PageImpl<>(
                 spendings.stream().map(
                         spending -> new SpendingGridDto(
@@ -87,5 +92,13 @@ public class SpendingServiceImpl implements SpendingService {
                         .collect(Collectors.toList()), spendings.getPageable(), spendings.getTotalElements());
 
         return dtos;
+    }
+
+    @Override
+    public Spending getSpendingbyId(Long id) {
+        String username = getUsername();
+        Spending spending = spendingRepository.findByIdAndUsername(id, username);
+
+        return spending;
     }
 }

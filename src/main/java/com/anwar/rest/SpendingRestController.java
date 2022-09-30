@@ -21,6 +21,17 @@ public class SpendingRestController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getSpendingById(@PathVariable Long id) {
+        var response = spendingService.getSpendingbyId(id);
+
+        if (response == null) {
+            throw new NotFoundException("Spending is not found");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PostMapping
     public ResponseEntity<Object> spendMoney(@RequestBody SpendMoneyDto dto) {
         var response = spendingService.spendMoney(dto);
@@ -30,7 +41,7 @@ public class SpendingRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteSpending(@PathVariable Long id) {
-        var spending = spendingService.getSpending(id);
+        var spending = spendingService.countSpending(id);
 
         if (spending == 0) {
             throw new NotFoundException("Spending with id " + id + " is not found.");

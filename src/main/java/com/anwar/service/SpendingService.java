@@ -11,7 +11,9 @@ public interface SpendingService {
 
     ResponseDto deleteSpending(Long id);
 
-    Long getSpending(Long id);
+    Long countSpending(Long id);
 
     Page<SpendingGridDto> getAllSpendings(Integer page);
+
+    Spending getSpendingbyId(Long id);
 }

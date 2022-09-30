@@ -18,6 +18,15 @@ public interface SpendingRepository extends JpaRepository<Spending, Long> {
     @Query(value = """
             SELECT *
             FROM Spending
+            WHERE Username = :username
             """, nativeQuery = true)
-    Page<Spending> findAllSpendings(Pageable pagination);
+    Page<Spending> findAllSpendings(@Param("username") String username, Pageable pagination);
+
+    @Query(value = """
+            SELECT *
+            FROM Spending
+            WHERE Id = :id
+                AND Username = :username
+            """, nativeQuery = true)
+    Spending findByIdAndUsername(Long id, String username);
 }
