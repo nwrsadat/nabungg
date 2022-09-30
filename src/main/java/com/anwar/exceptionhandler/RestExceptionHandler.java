@@ -38,4 +38,15 @@ public class RestExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(NotFoundException exc) {
+        ErrorResponse error = new ErrorResponse();
+
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setMessage(exc.getMessage());
+        error.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 }

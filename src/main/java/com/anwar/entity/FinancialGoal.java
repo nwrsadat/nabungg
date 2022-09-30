@@ -34,11 +34,9 @@ public class FinancialGoal {
     @Column(name = "IsAchieved")
     private Boolean isAchieved;
 
-    @CreatedDate
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
     @Column(name = "UpdatedAt")
     private LocalDateTime updatedAt;
 

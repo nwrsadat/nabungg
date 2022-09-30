@@ -12,11 +12,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Outcome")
+@Table(name = "Spending")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-public class Outcome {
+public class Spending {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", nullable = false)
@@ -28,11 +28,9 @@ public class Outcome {
     @Column(name = "Price")
     private BigDecimal price;
 
-    @CreatedDate
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
     @Column(name = "UpdatedAt")
     private LocalDateTime updatedAt;
 
@@ -42,4 +40,17 @@ public class Outcome {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Username", insertable = false, updatable = false)
     private Account account;
+
+    @Override
+    public String toString() {
+        return "Spending{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", username='" + username + '\'' +
+                ", account=" + account +
+                '}';
+    }
 }
