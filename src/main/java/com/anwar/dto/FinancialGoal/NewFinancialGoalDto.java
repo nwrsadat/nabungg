@@ -10,9 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-public class FinancialGoalDto {
+public class NewFinancialGoalDto {
     private String productName;
     private BigDecimal totalPrice;
-    private BigDecimal yourmoney;
-    private Boolean isAchieved;
 }

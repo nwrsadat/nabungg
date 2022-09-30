@@ -1,24 +1,11 @@
 package com.anwar.dto.Spending;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
+@Data
 public class SpendMoneyDto {
-    private String name;
-    private BigDecimal price;
-
-    @Override
-    public String toString() {
-        return "SpendMoneyDto{" +
-                "name='" + name + '\'' +
-                ", price=" + price +
-                '}';
-    }
+    private final String name;
+    private final BigDecimal price;
 }

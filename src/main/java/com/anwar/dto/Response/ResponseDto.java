@@ -1,16 +1,10 @@
 package com.anwar.dto.Response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class ResponseDto {
-    private int status;
-    private Object response;
-    private long timestamp;
+    private final int status;
+    private final Object response;
+    private final long timestamp;
 }

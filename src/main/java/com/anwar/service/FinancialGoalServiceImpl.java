@@ -2,18 +2,22 @@ package com.anwar.service;
 
 import com.anwar.dto.FinancialGoal.AddMoneyDto;
 import com.anwar.dto.FinancialGoal.FinancialGoalDto;
+import com.anwar.dto.FinancialGoal.NewFinancialGoalDto;
 import com.anwar.dto.Response.ResponseDto;
+import com.anwar.dto.Spending.SpendingGridDto;
 import com.anwar.entity.Account;
 import com.anwar.entity.FinancialGoal;
 import com.anwar.repository.AccountRepository;
 import com.anwar.repository.FinancialGoalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Service
 public class FinancialGoalServiceImpl implements FinancialGoalService {
@@ -22,6 +26,12 @@ public class FinancialGoalServiceImpl implements FinancialGoalService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    public Pageable getPagination(Integer page) {
+        Pageable pagination = PageRequest.of(page - 1, 10, Sort.by("id"));
+
+        return pagination;
+    }
 
     public String getUsername() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
@@ -32,7 +42,7 @@ public class FinancialGoalServiceImpl implements FinancialGoalService {
     }
 
     @Override
-    public ResponseDto createFinancialGoal(FinancialGoalDto dto) {
+    public ResponseDto createFinancialGoal(NewFinancialGoalDto dto) {
         Account account = getAccount();
         FinancialGoal financialGoal = new FinancialGoal();
 
@@ -88,7 +98,9 @@ public class FinancialGoalServiceImpl implements FinancialGoalService {
             return responseDto;
         }
 
+        financialGoal.setUpdatedAt(LocalDateTime.now());
         account.setBalance(account.getBalance().subtract(dto.getMoney()));
+
         financialGoalRepository.save(financialGoal);
         accountRepository.save(account);
 
@@ -104,5 +116,24 @@ public class FinancialGoalServiceImpl implements FinancialGoalService {
     @Override
     public Long countFinancialGoalById(Long id) {
         return financialGoalRepository.countGoalById(id);
+    }
+
+    @Override
+    public Page<FinancialGoalDto> getAllGoals(Integer page) {
+        var pagination = getPagination(page);
+        var account = getAccount();
+        var financialGoals = financialGoalRepository.findAllGoals(account.getUsername(), pagination);
+
+        Page<FinancialGoalDto> dtos = new PageImpl<>(
+                financialGoals.stream().map(
+                                goal -> new FinancialGoalDto(
+                                        goal.getProductName(),
+                                        goal.getTotalPrice(),
+                                        goal.getYourMoney(),
+                                        goal.getIsAchieved()
+                                ))
+                        .collect(Collectors.toList()), financialGoals.getPageable(), financialGoals.getTotalElements());
+
+        return dtos;
     }
 }

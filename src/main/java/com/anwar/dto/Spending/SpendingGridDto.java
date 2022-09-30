@@ -1,17 +1,12 @@
 package com.anwar.dto.Spending;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
+@Data
 public class SpendingGridDto {
-    private String name;
-    private BigDecimal price;
-    private String username;
+    private final String name;
+    private final BigDecimal price;
+    private final String username;
 }
