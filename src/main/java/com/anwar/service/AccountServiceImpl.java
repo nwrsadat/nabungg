@@ -1,12 +1,15 @@
 package com.anwar.service;
 
 import com.anwar.ApplicationUserDetails;
+import com.anwar.dto.Account.AddBalanceDto;
 import com.anwar.dto.Account.RegisterAccountDto;
 import com.anwar.dto.Response.ResponseDto;
 import com.anwar.entity.Account;
+import com.anwar.helper.Helper;
 import com.anwar.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +26,14 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public String getUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    public Account getAccount() {
+        return accountRepository.findById(getUsername()).get();
+    }
 
     @Override
     public ResponseDto register(RegisterAccountDto dto) {
@@ -55,6 +66,23 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
         Account account = accountRepository.findById(username).get();
 
         return account.getRole();
+    }
+
+    @Override
+    public ResponseDto addBalance(AddBalanceDto dto) {
+        Account account = getAccount();
+
+        account.setBalance(account.getBalance().add(dto.getBalance()));
+
+        accountRepository.save(account);
+
+        ResponseDto responseDto = new ResponseDto(
+                HttpStatus.OK.value(),
+                Helper.formatCurrency(dto.getBalance()) + " is added to your balance",
+                System.currentTimeMillis()
+        );
+
+        return responseDto;
     }
 
     @Override

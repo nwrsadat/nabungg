@@ -1,6 +1,7 @@
 package com.anwar.rest;
 
 import com.anwar.JwtToken;
+import com.anwar.dto.Account.AddBalanceDto;
 import com.anwar.dto.Account.RegisterAccountDto;
 import com.anwar.dto.Account.RequestTokenDto;
 import com.anwar.dto.Account.ResponseTokenDto;
@@ -12,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
@@ -43,15 +41,22 @@ public class AccountRestController {
     @PostMapping("/authenticate")
     public ResponseEntity<Object> login(@RequestBody RequestTokenDto dto) {
         try {
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
-            Authentication authentication = authenticationManager.authenticate(token);
+            var token = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
+            var authentication = authenticationManager.authenticate(token);
         } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can not authenticate", exception);
         }
 
-        String role = accountService.getAccountRole(dto.getUsername());
-        String token = jwtToken.generateToken(dto.getSubject(), dto.getUsername(), dto.getSecretKey(), role, dto.getAudience());
-        ResponseTokenDto response = new ResponseTokenDto(dto.getUsername(), role, token);
+        var role = accountService.getAccountRole(dto.getUsername());
+        var token = jwtToken.generateToken(dto.getSubject(), dto.getUsername(), dto.getSecretKey(), role, dto.getAudience());
+        var response = new ResponseTokenDto(dto.getUsername(), role, token);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/add-balance")
+    public ResponseEntity<Object> addBalance(@RequestBody AddBalanceDto dto) {
+        var response = accountService.addBalance(dto);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
